@@ -3,7 +3,7 @@ Contributors: ziv
 Tags: social media, ai, content, marketing, image generation
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -58,6 +58,10 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 
 == Changelog ==
 
+= 1.1.0 =
+* Fix: OpenAI and Gemini API keys entered in Settings → Social Assets were silently discarded on save. The Image Generation section rendered a second, always-blank input with the same field name as the main provider key, and the blank one was overwriting the saved value. Removed the duplicate field.
+* New: GitHub-based update system (updates served from GitHub releases, with update badge and manual "Check for updates" support)
+
 = 1.0.0 =
 * Initial release.
 * Support for 6 text AI providers and 4 image providers.
@@ -65,6 +69,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 * Save-to-post-meta with title/subject selection.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Fixes API keys not saving in Settings → Social Assets, and adds self-updating from GitHub.
 
 = 1.0.0 =
 Initial release.

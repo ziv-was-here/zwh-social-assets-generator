@@ -372,9 +372,7 @@ class SAG_Settings {
 										<?php if ( ! empty( self::get( 'openai_key' ) ) ) : ?>
 											<span style="color:#42617d; font-weight:700; font-size:13px;">✓ Using your saved OpenAI key</span>
 										<?php else : ?>
-											<input type="password" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[openai_key]"
-												value="" class="regular-text" autocomplete="new-password">
-											<p class="description">Same key used for text generation. Get one at <a href="https://platform.openai.com" target="_blank">platform.openai.com</a></p>
+											<span class="description">No OpenAI key saved yet. Enter it in the <strong>OpenAI settings</strong> section above and save — this image option reuses it automatically. Get one at <a href="https://platform.openai.com" target="_blank">platform.openai.com</a></span>
 										<?php endif; ?>
 									</td>
 								</tr>
@@ -392,9 +390,7 @@ class SAG_Settings {
 										<?php if ( ! empty( self::get( 'gemini_key' ) ) ) : ?>
 											<span style="color:#42617d; font-weight:700; font-size:13px;">✓ Using your saved Gemini key</span>
 										<?php else : ?>
-											<input type="password" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[gemini_key]"
-												value="" class="regular-text" autocomplete="new-password">
-											<p class="description">Same key used for text generation. Free at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a></p>
+											<span class="description">No Gemini key saved yet. Enter it in the <strong>Google Gemini settings</strong> section above and save — this image option reuses it automatically. Free at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a></span>
 										<?php endif; ?>
 									</td>
 								</tr>
