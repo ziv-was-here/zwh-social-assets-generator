@@ -355,7 +355,7 @@ class SAG_Settings {
 							<label for="sag-image-provider-dropdown">Image generation provider</label>
 							<select id="sag-image-provider-dropdown" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[image_provider]">
 								<option value="openai"    <?php selected( $active_img, 'openai' ); ?>>OpenAI — gpt-image-2</option>
-								<option value="gemini"    <?php selected( $active_img, 'gemini' ); ?>>Google — Imagen 3 (free)</option>
+								<option value="gemini"    <?php selected( $active_img, 'gemini' ); ?>>Google — Imagen 4</option>
 								<option value="stability" <?php selected( $active_img, 'stability' ); ?>>Stability AI — Stable Image Core</option>
 								<option value="flux"      <?php selected( $active_img, 'flux' ); ?>>Flux via fal.ai</option>
 							</select>
@@ -382,7 +382,7 @@ class SAG_Settings {
 
 						<!-- Image: Gemini Imagen (reuses gemini_key) -->
 						<div class="sag-provider-group sag-img-group <?php echo $active_img === 'gemini' ? 'sag-active' : ''; ?>" data-img-provider="gemini">
-							<h3>Google Imagen 3 settings</h3>
+							<h3>Google Imagen 4 settings</h3>
 							<table class="form-table"><tbody>
 								<tr>
 									<th>API key</th>
@@ -394,7 +394,7 @@ class SAG_Settings {
 										<?php endif; ?>
 									</td>
 								</tr>
-								<tr><th>Model</th><td><strong>imagen-3.0-generate-002</strong> <span class="description">— 16:9 ratio, PNG</span></td></tr>
+								<tr><th>Model</th><td><strong>imagen-4.0-generate-001</strong> <span class="description">— 16:9 ratio, PNG</span></td></tr>
 							</tbody></table>
 						</div>
 

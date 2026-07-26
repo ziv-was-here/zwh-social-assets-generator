@@ -58,7 +58,7 @@ class SAG_Meta_Box {
 
 		$image_provider_labels = array(
 			'openai'    => 'OpenAI',
-			'gemini'    => 'Imagen 3',
+			'gemini'    => 'Imagen 4',
 			'stability' => 'Stability',
 			'flux'      => 'Flux',
 		);
@@ -93,7 +93,7 @@ class SAG_Meta_Box {
 			case 'stability': $has_image_api = ! empty( SAG_Settings::get( 'stability_key' ) ); break;
 			case 'flux':      $has_image_api = ! empty( SAG_Settings::get( 'flux_key' ) ); break;
 		}
-		$image_provider_labels = array( 'openai' => 'OpenAI', 'gemini' => 'Imagen 3', 'stability' => 'Stability', 'flux' => 'Flux' );
+		$image_provider_labels = array( 'openai' => 'OpenAI', 'gemini' => 'Imagen 4', 'stability' => 'Stability', 'flux' => 'Flux' );
 		$img_label = $image_provider_labels[ $image_provider ] ?? 'Image';
 		?>
 		<div id="sag-wrap">

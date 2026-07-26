@@ -130,14 +130,14 @@ class SAG_API {
 		return self::make_base64_result( $b64, 'png', $prompt );
 	}
 
-	/** Google Gemini Imagen 3 — returns bytesBase64Encoded */
+	/** Google Gemini Imagen 4 — returns bytesBase64Encoded */
 	private static function generate_image_gemini( $prompt, $format = 'banner' ) {
 		$api_key = SAG_Settings::get( 'gemini_key' );
 		if ( empty( $api_key ) ) {
 			return array( 'type' => 'prompt', 'prompt' => $prompt );
 		}
 
-		// Imagen 3 supports: 1:1, 3:4, 4:3, 16:9, 9:16
+		// Imagen 4 supports: 1:1, 3:4, 4:3, 16:9, 9:16
 		$aspect_map = array(
 			'banner'        => '16:9',
 			'feed_square'   => '1:1',
@@ -146,7 +146,7 @@ class SAG_API {
 		);
 		$aspect = $aspect_map[ $format ] ?? '16:9';
 
-		$model = 'imagen-3.0-generate-002';
+		$model = 'imagen-4.0-generate-001';
 		$url   = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:predict?key={$api_key}";
 
 		$response = wp_remote_post( $url, array(

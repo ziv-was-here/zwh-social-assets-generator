@@ -3,7 +3,7 @@ Contributors: ziv
 Tags: social media, ai, content, marketing, image generation
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -22,7 +22,7 @@ Social Assets Generator adds a meta box to every post and page editor. With one 
 * Facebook post
 * Hashtag sets for all platforms
 
-It also generates social share images via OpenAI gpt-image-2, Google Imagen 3, Stability AI, or Flux (fal.ai) in four formats: banner (1200×630), square feed (1080×1080), portrait feed (1080×1350), and Stories/Reels/TikTok (1080×1920).
+It also generates social share images via OpenAI gpt-image-2, Google Imagen 4, Stability AI, or Flux (fal.ai) in four formats: banner (1200×630), square feed (1080×1080), portrait feed (1080×1350), and Stories/Reels/TikTok (1080×1920).
 
 Generated images are saved to the WordPress media library. All text assets are saved to post meta and reload automatically the next time you open the editor.
 
@@ -41,7 +41,7 @@ Claude (Anthropic), OpenAI (GPT-4o), Google Gemini, Groq, Mistral, and Ollama Cl
 
 = Which providers are supported for image generation? =
 
-OpenAI gpt-image-2, Google Imagen 3, Stability AI Stable Image Core, and Flux via fal.ai.
+OpenAI gpt-image-2, Google Imagen 4, Stability AI Stable Image Core, and Flux via fal.ai.
 
 = Do I need all API keys? =
 
@@ -58,6 +58,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 
 == Changelog ==
 
+= 1.1.2 =
+* Fix: imagen-3.0-generate-002 also 404'd — confirmed via Google's ListModels API that no imagen-3.0-* model is available anymore. Switched to imagen-4.0-generate-001 (currently the only Imagen model exposing the predict method on the Gemini API). Relabeled "Imagen 3" to "Imagen 4" throughout settings and meta box.
+
 = 1.1.1 =
 * Fix: Google Imagen calls failed with "models/imagen-3.0-generate-001 is not found for API version v1beta" — Google retired that model ID. Updated to imagen-3.0-generate-002.
 
@@ -72,6 +75,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 * Save-to-post-meta with title/subject selection.
 
 == Upgrade Notice ==
+
+= 1.1.2 =
+Fixes Google image generation for real this time — switches to Imagen 4, the only model your API key actually has predict access to.
 
 = 1.1.1 =
 Fixes Google Imagen image generation (retired model ID).
