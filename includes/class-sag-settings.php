@@ -394,7 +394,7 @@ class SAG_Settings {
 										<?php endif; ?>
 									</td>
 								</tr>
-								<tr><th>Model</th><td><strong>imagen-3.0-generate-001</strong> <span class="description">— 16:9 ratio, PNG</span></td></tr>
+								<tr><th>Model</th><td><strong>imagen-3.0-generate-002</strong> <span class="description">— 16:9 ratio, PNG</span></td></tr>
 							</tbody></table>
 						</div>
 

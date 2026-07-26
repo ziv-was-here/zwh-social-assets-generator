@@ -146,7 +146,7 @@ class SAG_API {
 		);
 		$aspect = $aspect_map[ $format ] ?? '16:9';
 
-		$model = 'imagen-3.0-generate-001';
+		$model = 'imagen-3.0-generate-002';
 		$url   = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:predict?key={$api_key}";
 
 		$response = wp_remote_post( $url, array(

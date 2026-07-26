@@ -4,7 +4,7 @@
  * Update URI:  https://github.com/ziv-was-here/zwh-social-assets-generator
  * Plugin URI:        https://github.com/ziv-was-here/zwh-social-assets-generator
  * Description:       Generate social captions, titles, subject lines, hashtags, and more from any WordPress post using Claude or OpenAI.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Author:            Ziv Rozenberg
  * Author URI:        https://zivwashere.com/
  * License:           GPL-2.0-or-later
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SAG_VERSION', '1.1.0' );
+define( 'SAG_VERSION', '1.1.1' );
 define( 'SAG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SAG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
