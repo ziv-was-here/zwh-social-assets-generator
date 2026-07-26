@@ -6,6 +6,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SAG_API {
 
 	/**
+	 * Read-only peek at the cached Imagen model, for display in Settings.
+	 * Does not make an API call — returns '' if nothing has been auto-detected yet.
+	 */
+	public static function get_cached_gemini_imagen_model() {
+		$cached = get_site_transient( self::GEMINI_IMAGEN_MODEL_CACHE_KEY );
+		return is_string( $cached ) ? $cached : '';
+	}
+
+	/**
 	 * Generate social assets from post content.
 	 */
 	public static function generate( $title, $content, $tone = '' ) {
@@ -130,14 +139,14 @@ class SAG_API {
 		return self::make_base64_result( $b64, 'png', $prompt );
 	}
 
-	/** Google Gemini Imagen 4 — returns bytesBase64Encoded */
-	private static function generate_image_gemini( $prompt, $format = 'banner' ) {
+	/** Google Gemini Imagen — returns bytesBase64Encoded. Auto-discovers the current model, self-heals if Google retires it. */
+	private static function generate_image_gemini( $prompt, $format = 'banner', $retry = true ) {
 		$api_key = SAG_Settings::get( 'gemini_key' );
 		if ( empty( $api_key ) ) {
 			return array( 'type' => 'prompt', 'prompt' => $prompt );
 		}
 
-		// Imagen 4 supports: 1:1, 3:4, 4:3, 16:9, 9:16
+		// Imagen supports: 1:1, 3:4, 4:3, 16:9, 9:16
 		$aspect_map = array(
 			'banner'        => '16:9',
 			'feed_square'   => '1:1',
@@ -146,8 +155,12 @@ class SAG_API {
 		);
 		$aspect = $aspect_map[ $format ] ?? '16:9';
 
-		$model = 'imagen-4.0-generate-001';
-		$url   = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:predict?key={$api_key}";
+		$model = self::resolve_gemini_imagen_model( $api_key );
+		if ( is_wp_error( $model ) ) {
+			return $model;
+		}
+
+		$url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:predict?key={$api_key}";
 
 		$response = wp_remote_post( $url, array(
 			'timeout' => 120,
@@ -166,7 +179,15 @@ class SAG_API {
 		$data = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( $code !== 200 ) {
-			return new WP_Error( 'sag_image_error', $data['error']['message'] ?? "Gemini Imagen error (HTTP {$code})" );
+			$message = $data['error']['message'] ?? "Gemini Imagen error (HTTP {$code})";
+
+			// Google retired this model ID since we last cached it — refresh the list once and retry.
+			if ( $retry && ( $code === 404 || stripos( $message, 'not found' ) !== false || stripos( $message, 'not supported for predict' ) !== false ) ) {
+				delete_site_transient( self::GEMINI_IMAGEN_MODEL_CACHE_KEY );
+				return self::generate_image_gemini( $prompt, $format, false );
+			}
+
+			return new WP_Error( 'sag_image_error', $message );
 		}
 
 		$b64      = $data['predictions'][0]['bytesBase64Encoded'] ?? '';
@@ -178,6 +199,71 @@ class SAG_API {
 		}
 
 		return self::make_base64_result( $b64, $ext, $prompt, $mimetype );
+	}
+
+	const GEMINI_IMAGEN_MODEL_CACHE_KEY = 'sag_gemini_imagen_model';
+
+	/**
+	 * Ask Google which Imagen model currently supports "predict" for this key,
+	 * instead of hardcoding a model ID that Google can retire without notice.
+	 * Cached for 24h; callers can force a refresh by deleting the transient first.
+	 *
+	 * @return string|WP_Error Model id (no "models/" prefix), e.g. "imagen-4.0-generate-001".
+	 */
+	private static function resolve_gemini_imagen_model( $api_key ) {
+		$cached = get_site_transient( self::GEMINI_IMAGEN_MODEL_CACHE_KEY );
+		if ( is_string( $cached ) && '' !== $cached ) {
+			return $cached;
+		}
+
+		$url      = "https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key={$api_key}";
+		$response = wp_remote_get( $url, array( 'timeout' => 30 ) );
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$code = wp_remote_retrieve_response_code( $response );
+		$data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		if ( $code !== 200 ) {
+			return new WP_Error( 'sag_image_error', $data['error']['message'] ?? "Could not list Gemini models (HTTP {$code})" );
+		}
+
+		$candidates = array();
+		foreach ( $data['models'] ?? array() as $m ) {
+			$name = $m['name'] ?? '';
+			if ( strpos( $name, 'models/imagen' ) !== 0 ) {
+				continue;
+			}
+			if ( ! in_array( 'predict', $m['supportedGenerationMethods'] ?? array(), true ) ) {
+				continue;
+			}
+			$id = substr( $name, strlen( 'models/' ) );
+
+			preg_match( '/imagen-(\d+(?:\.\d+)?)/', $id, $match );
+			$version = isset( $match[1] ) ? (float) $match[1] : 0;
+			$is_plain = ( strpos( $id, 'fast' ) === false && strpos( $id, 'ultra' ) === false );
+
+			$candidates[] = array( 'id' => $id, 'version' => $version, 'plain' => $is_plain );
+		}
+
+		if ( empty( $candidates ) ) {
+			return new WP_Error( 'sag_image_error', 'No Imagen model with predict support is available for this API key. Run Settings → Social Assets or call ListModels to check access.' );
+		}
+
+		// Prefer the newest version; among same version prefer the plain (non-fast/non-ultra) variant.
+		usort( $candidates, function ( $a, $b ) {
+			if ( $a['version'] !== $b['version'] ) {
+				return $b['version'] <=> $a['version'];
+			}
+			return $b['plain'] <=> $a['plain'];
+		} );
+
+		$chosen = $candidates[0]['id'];
+		set_site_transient( self::GEMINI_IMAGEN_MODEL_CACHE_KEY, $chosen, DAY_IN_SECONDS );
+
+		return $chosen;
 	}
 
 	/** Stability AI v2beta Stable Image Core — multipart/form-data → base64 JSON */

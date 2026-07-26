@@ -3,7 +3,7 @@ Contributors: ziv
 Tags: social media, ai, content, marketing, image generation
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.1.2
+Stable tag: 1.2.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -58,6 +58,10 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 
 == Changelog ==
 
+= 1.2.0 =
+* New: Google Imagen model is now auto-detected instead of hardcoded. We've hit Google retiring the Imagen model ID twice in one week (imagen-3.0-generate-001, then -002) — the plugin now calls ListModels itself, picks the newest model that supports "predict", and caches it for 24 hours. If a cached model gets retired mid-day, the very next request detects the 404/"not found" response, clears the cache, re-detects, and retries automatically — no more manual hotfixes when Google renames a model.
+* Settings → Social Assets now shows the currently auto-detected Imagen model instead of a fixed name.
+
 = 1.1.2 =
 * Fix: imagen-3.0-generate-002 also 404'd — confirmed via Google's ListModels API that no imagen-3.0-* model is available anymore. Switched to imagen-4.0-generate-001 (currently the only Imagen model exposing the predict method on the Gemini API). Relabeled "Imagen 3" to "Imagen 4" throughout settings and meta box.
 
@@ -75,6 +79,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 * Save-to-post-meta with title/subject selection.
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+Google Imagen model is now auto-detected and self-healing — no more breakage when Google retires a model ID.
 
 = 1.1.2 =
 Fixes Google image generation for real this time — switches to Imagen 4, the only model your API key actually has predict access to.

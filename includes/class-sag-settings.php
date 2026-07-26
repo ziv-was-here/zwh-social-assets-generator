@@ -394,7 +394,17 @@ class SAG_Settings {
 										<?php endif; ?>
 									</td>
 								</tr>
-								<tr><th>Model</th><td><strong>imagen-4.0-generate-001</strong> <span class="description">— 16:9 ratio, PNG</span></td></tr>
+								<tr>
+									<th>Model</th>
+									<td>
+										<?php $detected = class_exists( 'SAG_API' ) ? SAG_API::get_cached_gemini_imagen_model() : ''; ?>
+										<?php if ( $detected ) : ?>
+											<strong><?php echo esc_html( $detected ); ?></strong> <span class="description">— auto-detected, refreshes daily</span>
+										<?php else : ?>
+											<span class="description">Auto-detected on first use — the plugin asks Google which Imagen model currently supports image generation for your key, rather than a hardcoded version.</span>
+										<?php endif; ?>
+									</td>
+								</tr>
 							</tbody></table>
 						</div>
 
