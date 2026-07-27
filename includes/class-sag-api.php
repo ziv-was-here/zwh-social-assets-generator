@@ -181,8 +181,20 @@ class SAG_API {
 		if ( $code !== 200 ) {
 			$message = $data['error']['message'] ?? "Gemini Imagen error (HTTP {$code})";
 
-			// Google retired this model ID since we last cached it — refresh the list once and retry.
-			if ( $retry && ( $code === 404 || stripos( $message, 'not found' ) !== false || stripos( $message, 'not supported for predict' ) !== false ) ) {
+			// This model is unusable for us now — either Google retired the ID outright, or (as with
+			// "no longer available to new users") ListModels still advertises it but predict rejects it
+			// for this account. Either way: permanently exclude it, re-resolve, and retry once.
+			$unusable_phrases = array( 'not found', 'not supported for predict', 'no longer available', 'not available', 'deprecated' );
+			$is_unusable      = ( $code === 404 );
+			foreach ( $unusable_phrases as $phrase ) {
+				if ( stripos( $message, $phrase ) !== false ) {
+					$is_unusable = true;
+					break;
+				}
+			}
+
+			if ( $retry && $is_unusable ) {
+				self::exclude_gemini_imagen_model( $model );
 				delete_site_transient( self::GEMINI_IMAGEN_MODEL_CACHE_KEY );
 				return self::generate_image_gemini( $prompt, $format, false );
 			}
@@ -202,11 +214,26 @@ class SAG_API {
 	}
 
 	const GEMINI_IMAGEN_MODEL_CACHE_KEY = 'sag_gemini_imagen_model';
+	const GEMINI_IMAGEN_EXCLUDED_KEY    = 'sag_gemini_imagen_excluded';
+
+	/**
+	 * Permanently exclude a model id from auto-selection (e.g. Google's ListModels
+	 * still advertises it, but the account has lost access to it in practice).
+	 * Stored for 30 days — long enough to survive the 24h model cache many times over.
+	 */
+	private static function exclude_gemini_imagen_model( $model_id ) {
+		$excluded   = get_site_transient( self::GEMINI_IMAGEN_EXCLUDED_KEY );
+		$excluded   = is_array( $excluded ) ? $excluded : array();
+		$excluded[] = $model_id;
+		set_site_transient( self::GEMINI_IMAGEN_EXCLUDED_KEY, array_values( array_unique( $excluded ) ), 30 * DAY_IN_SECONDS );
+	}
 
 	/**
 	 * Ask Google which Imagen model currently supports "predict" for this key,
 	 * instead of hardcoding a model ID that Google can retire without notice.
 	 * Cached for 24h; callers can force a refresh by deleting the transient first.
+	 * Models that previously failed in practice (see exclude_gemini_imagen_model)
+	 * are skipped even if ListModels still lists them.
 	 *
 	 * @return string|WP_Error Model id (no "models/" prefix), e.g. "imagen-4.0-generate-001".
 	 */
@@ -230,6 +257,9 @@ class SAG_API {
 			return new WP_Error( 'sag_image_error', $data['error']['message'] ?? "Could not list Gemini models (HTTP {$code})" );
 		}
 
+		$excluded   = get_site_transient( self::GEMINI_IMAGEN_EXCLUDED_KEY );
+		$excluded   = is_array( $excluded ) ? $excluded : array();
+
 		$candidates = array();
 		foreach ( $data['models'] ?? array() as $m ) {
 			$name = $m['name'] ?? '';
@@ -240,12 +270,22 @@ class SAG_API {
 				continue;
 			}
 			$id = substr( $name, strlen( 'models/' ) );
+			if ( in_array( $id, $excluded, true ) ) {
+				continue;
+			}
 
 			preg_match( '/imagen-(\d+(?:\.\d+)?)/', $id, $match );
 			$version = isset( $match[1] ) ? (float) $match[1] : 0;
 			$is_plain = ( strpos( $id, 'fast' ) === false && strpos( $id, 'ultra' ) === false );
 
 			$candidates[] = array( 'id' => $id, 'version' => $version, 'plain' => $is_plain );
+		}
+
+		// If exclusions have wiped out every candidate, ignore them rather than hard-failing —
+		// better to attempt a known-bad model (which will just exclude itself again next time)
+		// than to refuse to generate at all.
+		if ( empty( $candidates ) && ! empty( $excluded ) ) {
+			return self::resolve_gemini_imagen_model_ignoring_exclusions( $data );
 		}
 
 		if ( empty( $candidates ) ) {
@@ -264,6 +304,39 @@ class SAG_API {
 		set_site_transient( self::GEMINI_IMAGEN_MODEL_CACHE_KEY, $chosen, DAY_IN_SECONDS );
 
 		return $chosen;
+	}
+
+	/** Fallback ranking pass that ignores the exclusion list — see resolve_gemini_imagen_model(). */
+	private static function resolve_gemini_imagen_model_ignoring_exclusions( $data ) {
+		$candidates = array();
+		foreach ( $data['models'] ?? array() as $m ) {
+			$name = $m['name'] ?? '';
+			if ( strpos( $name, 'models/imagen' ) !== 0 ) {
+				continue;
+			}
+			if ( ! in_array( 'predict', $m['supportedGenerationMethods'] ?? array(), true ) ) {
+				continue;
+			}
+			$id = substr( $name, strlen( 'models/' ) );
+			preg_match( '/imagen-(\d+(?:\.\d+)?)/', $id, $match );
+			$version  = isset( $match[1] ) ? (float) $match[1] : 0;
+			$is_plain = ( strpos( $id, 'fast' ) === false && strpos( $id, 'ultra' ) === false );
+			$candidates[] = array( 'id' => $id, 'version' => $version, 'plain' => $is_plain );
+		}
+
+		if ( empty( $candidates ) ) {
+			return new WP_Error( 'sag_image_error', 'No Imagen model with predict support is available for this API key. Run Settings → Social Assets or call ListModels to check access.' );
+		}
+
+		usort( $candidates, function ( $a, $b ) {
+			if ( $a['version'] !== $b['version'] ) {
+				return $b['version'] <=> $a['version'];
+			}
+			return $b['plain'] <=> $a['plain'];
+		} );
+
+		// Don't cache here — this is a last-resort pick from an all-excluded list, not a real fix.
+		return $candidates[0]['id'];
 	}
 
 	/** Stability AI v2beta Stable Image Core — multipart/form-data → base64 JSON */
