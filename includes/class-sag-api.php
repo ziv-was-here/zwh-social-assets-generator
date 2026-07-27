@@ -6,15 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SAG_API {
 
 	/**
-	 * Read-only peek at the cached Imagen model, for display in Settings.
-	 * Does not make an API call — returns '' if nothing has been auto-detected yet.
-	 */
-	public static function get_cached_gemini_imagen_model() {
-		$cached = get_site_transient( self::GEMINI_IMAGEN_MODEL_CACHE_KEY );
-		return is_string( $cached ) ? $cached : '';
-	}
-
-	/**
 	 * Generate social assets from post content.
 	 */
 	public static function generate( $title, $content, $tone = '' ) {
@@ -194,8 +185,8 @@ class SAG_API {
 			}
 
 			if ( $retry && $is_unusable ) {
-				self::exclude_gemini_imagen_model( $model );
-				delete_site_transient( self::GEMINI_IMAGEN_MODEL_CACHE_KEY );
+				self::exclude_gemini_imagen_model( $model, $api_key );
+				delete_site_transient( self::scoped_key( self::GEMINI_IMAGEN_MODEL_CACHE_KEY, $api_key ) );
 				return self::generate_image_gemini( $prompt, $format, false );
 			}
 
@@ -217,28 +208,51 @@ class SAG_API {
 	const GEMINI_IMAGEN_EXCLUDED_KEY    = 'sag_gemini_imagen_excluded';
 
 	/**
-	 * Permanently exclude a model id from auto-selection (e.g. Google's ListModels
-	 * still advertises it, but the account has lost access to it in practice).
+	 * Scope a cache key to the specific API key in use, so switching keys (e.g. free -> paid
+	 * tier) starts fresh instead of inheriting a stale model choice or exclusion list from a
+	 * different account. Transient option names have a practical length limit, hence the hash.
+	 */
+	private static function scoped_key( $base, $api_key ) {
+		return $base . '_' . substr( md5( $api_key ), 0, 12 );
+	}
+
+	/**
+	 * Read-only peek at the cached Imagen model, for display in Settings.
+	 * Does not make an API call — returns '' if nothing has been auto-detected yet for this key.
+	 */
+	public static function get_cached_gemini_imagen_model_for_key( $api_key ) {
+		if ( empty( $api_key ) ) {
+			return '';
+		}
+		$cached = get_site_transient( self::scoped_key( self::GEMINI_IMAGEN_MODEL_CACHE_KEY, $api_key ) );
+		return is_string( $cached ) ? $cached : '';
+	}
+
+	/**
+	 * Permanently exclude a model id from auto-selection for this specific key (e.g. Google's
+	 * ListModels still advertises it, but this account has lost access to it in practice).
 	 * Stored for 30 days — long enough to survive the 24h model cache many times over.
 	 */
-	private static function exclude_gemini_imagen_model( $model_id ) {
-		$excluded   = get_site_transient( self::GEMINI_IMAGEN_EXCLUDED_KEY );
+	private static function exclude_gemini_imagen_model( $model_id, $api_key ) {
+		$cache_key  = self::scoped_key( self::GEMINI_IMAGEN_EXCLUDED_KEY, $api_key );
+		$excluded   = get_site_transient( $cache_key );
 		$excluded   = is_array( $excluded ) ? $excluded : array();
 		$excluded[] = $model_id;
-		set_site_transient( self::GEMINI_IMAGEN_EXCLUDED_KEY, array_values( array_unique( $excluded ) ), 30 * DAY_IN_SECONDS );
+		set_site_transient( $cache_key, array_values( array_unique( $excluded ) ), 30 * DAY_IN_SECONDS );
 	}
 
 	/**
 	 * Ask Google which Imagen model currently supports "predict" for this key,
 	 * instead of hardcoding a model ID that Google can retire without notice.
-	 * Cached for 24h; callers can force a refresh by deleting the transient first.
+	 * Cached per-key for 24h; callers can force a refresh by deleting the transient first.
 	 * Models that previously failed in practice (see exclude_gemini_imagen_model)
-	 * are skipped even if ListModels still lists them.
+	 * are skipped even if ListModels still lists them — scoped to this same key.
 	 *
 	 * @return string|WP_Error Model id (no "models/" prefix), e.g. "imagen-4.0-generate-001".
 	 */
 	private static function resolve_gemini_imagen_model( $api_key ) {
-		$cached = get_site_transient( self::GEMINI_IMAGEN_MODEL_CACHE_KEY );
+		$model_cache_key = self::scoped_key( self::GEMINI_IMAGEN_MODEL_CACHE_KEY, $api_key );
+		$cached          = get_site_transient( $model_cache_key );
 		if ( is_string( $cached ) && '' !== $cached ) {
 			return $cached;
 		}
@@ -257,8 +271,9 @@ class SAG_API {
 			return new WP_Error( 'sag_image_error', $data['error']['message'] ?? "Could not list Gemini models (HTTP {$code})" );
 		}
 
-		$excluded   = get_site_transient( self::GEMINI_IMAGEN_EXCLUDED_KEY );
-		$excluded   = is_array( $excluded ) ? $excluded : array();
+		$excluded_key = self::scoped_key( self::GEMINI_IMAGEN_EXCLUDED_KEY, $api_key );
+		$excluded     = get_site_transient( $excluded_key );
+		$excluded     = is_array( $excluded ) ? $excluded : array();
 
 		$candidates = array();
 		foreach ( $data['models'] ?? array() as $m ) {
@@ -301,7 +316,7 @@ class SAG_API {
 		} );
 
 		$chosen = $candidates[0]['id'];
-		set_site_transient( self::GEMINI_IMAGEN_MODEL_CACHE_KEY, $chosen, DAY_IN_SECONDS );
+		set_site_transient( $model_cache_key, $chosen, DAY_IN_SECONDS );
 
 		return $chosen;
 	}

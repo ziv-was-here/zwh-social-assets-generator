@@ -3,7 +3,7 @@ Contributors: ziv
 Tags: social media, ai, content, marketing, image generation
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -58,6 +58,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 
 == Changelog ==
 
+= 1.3.4 =
+* Fix: the Imagen model auto-detection cache and the "excluded model" list were shared site-wide instead of tied to which Gemini API key was configured. If you switched to a different key (e.g. moving to a paid-tier key), the plugin could keep honoring the old key's stale exclusions or cached model choice. Both are now scoped per API key, so entering a new key re-detects and re-checks access from scratch.
+
 = 1.3.3 =
 * Fix: "Generate Social Assets" could fail with "Could not parse the API response as JSON" on longer posts. The full social kit (5 titles, 5 subject lines, LinkedIn post, 5-tweet thread, Instagram, Facebook, hashtag sets) is a large JSON payload, and the output token limit (4096, or unset for OpenAI/Groq/Mistral/Ollama) was too small — the response was getting cut off mid-JSON. Raised limits across all providers (Claude, OpenAI-compatible, Gemini, Ollama Cloud) and added a clear "response looks cut off" hint to the error message when this happens.
 * Fix: that same error message was rendering the response preview double-HTML-escaped (visible `&quot;` instead of `"`), from an unnecessary `esc_html()` call — the admin UI already escapes safely on display.
@@ -92,6 +95,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 * Save-to-post-meta with title/subject selection.
 
 == Upgrade Notice ==
+
+= 1.3.4 =
+Fixes Imagen model detection/exclusion being shared across API keys — switching to a new (e.g. paid) Gemini key now re-checks access instead of reusing the old key's cache.
 
 = 1.3.3 =
 Fixes text generation failing/truncating on longer posts (token limit was too low) and a garbled error message.

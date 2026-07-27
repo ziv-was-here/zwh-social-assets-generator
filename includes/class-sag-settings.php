@@ -395,7 +395,7 @@ class SAG_Settings {
 								<tr>
 									<th>Model</th>
 									<td>
-										<?php $detected = class_exists( 'SAG_API' ) ? SAG_API::get_cached_gemini_imagen_model() : ''; ?>
+										<?php $detected = class_exists( 'SAG_API' ) ? SAG_API::get_cached_gemini_imagen_model_for_key( self::get( 'gemini_key' ) ) : ''; ?>
 										<?php if ( $detected ) : ?>
 											<strong><?php echo esc_html( $detected ); ?></strong> <span class="description">— auto-detected, refreshes daily</span>
 										<?php else : ?>
