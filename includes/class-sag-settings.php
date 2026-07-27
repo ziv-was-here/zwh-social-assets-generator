@@ -229,7 +229,7 @@ class SAG_Settings {
 									<td>
 										<input type="password" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[openai_key]"
 											value="<?php echo esc_attr( self::get( 'openai_key' ) ); ?>"
-											class="regular-text" autocomplete="new-password">
+											class="regular-text" autocomplete="new-password" data-sync-key="openai_key">
 										<p class="description">Get your key at <a href="https://platform.openai.com" target="_blank">platform.openai.com</a></p>
 									</td>
 								</tr>
@@ -253,7 +253,7 @@ class SAG_Settings {
 									<td>
 										<input type="password" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[gemini_key]"
 											value="<?php echo esc_attr( self::get( 'gemini_key' ) ); ?>"
-											class="regular-text" autocomplete="new-password">
+											class="regular-text" autocomplete="new-password" data-sync-key="gemini_key">
 										<p class="description">Free key at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> — 1M tokens/day free</p>
 									</td>
 								</tr>
@@ -369,11 +369,10 @@ class SAG_Settings {
 								<tr>
 									<th>API key</th>
 									<td>
-										<?php if ( ! empty( self::get( 'openai_key' ) ) ) : ?>
-											<span style="color:#42617d; font-weight:700; font-size:13px;">✓ Using your saved OpenAI key</span>
-										<?php else : ?>
-											<span class="description">No OpenAI key saved yet. Enter it in the <strong>OpenAI settings</strong> section above and save — this image option reuses it automatically. Get one at <a href="https://platform.openai.com" target="_blank">platform.openai.com</a></span>
-										<?php endif; ?>
+										<input type="password" class="regular-text" autocomplete="new-password"
+											value="<?php echo esc_attr( self::get( 'openai_key' ) ); ?>"
+											data-sync-key="openai_key">
+										<p class="description">Same key as the OpenAI text settings above — edit it from either place. Get one at <a href="https://platform.openai.com" target="_blank">platform.openai.com</a></p>
 									</td>
 								</tr>
 								<tr><th>Model</th><td><strong>gpt-image-2</strong> <span class="description">— 1536×1024, medium quality</span></td></tr>
@@ -387,11 +386,10 @@ class SAG_Settings {
 								<tr>
 									<th>API key</th>
 									<td>
-										<?php if ( ! empty( self::get( 'gemini_key' ) ) ) : ?>
-											<span style="color:#42617d; font-weight:700; font-size:13px;">✓ Using your saved Gemini key</span>
-										<?php else : ?>
-											<span class="description">No Gemini key saved yet. Enter it in the <strong>Google Gemini settings</strong> section above and save — this image option reuses it automatically. Free at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a></span>
-										<?php endif; ?>
+										<input type="password" class="regular-text" autocomplete="new-password"
+											value="<?php echo esc_attr( self::get( 'gemini_key' ) ); ?>"
+											data-sync-key="gemini_key">
+										<p class="description">Same key as the Google Gemini text settings above — edit it from either place. Free at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a></p>
 									</td>
 								</tr>
 								<tr>
@@ -514,6 +512,19 @@ class SAG_Settings {
 				imgDropdown.addEventListener('change', function() { showImageProvider(this.value); });
 				showImageProvider(imgDropdown.value);
 			}
+
+			// Keep API key fields in sync when the same key appears in more than one
+			// place (e.g. the OpenAI/Gemini text settings and their reused Image settings).
+			// Only the field(s) with a "name" attribute are actually submitted, so this is
+			// purely a display convenience — it can't create the old duplicate-submit bug.
+			document.querySelectorAll('[data-sync-key]').forEach(function(el) {
+				el.addEventListener('input', function() {
+					var key = this.dataset.syncKey;
+					document.querySelectorAll('[data-sync-key="' + key + '"]').forEach(function(other) {
+						if (other !== el) other.value = el.value;
+					});
+				});
+			});
 		})();
 		</script>
 		<?php

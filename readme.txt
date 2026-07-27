@@ -3,7 +3,7 @@ Contributors: ziv
 Tags: social media, ai, content, marketing, image generation
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -58,6 +58,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 
 == Changelog ==
 
+= 1.3.2 =
+* Fix: if your Image generation provider was OpenAI or Gemini but your Active AI provider (text) was something else, there was no visible way to set that key — it lived in a text-provider section hidden behind an unrelated dropdown. Both image sections now have their own editable API key field, live-synced with the text-provider field so there's still only one value saved, not two conflicting ones.
+
 = 1.3.1 =
 * Fix: imagen-4.0-generate-001 started returning "This model is no longer available to new users" — but Google's ListModels API still lists it as predict-capable, so our v1.2.0 auto-detection kept re-selecting the same broken model. Added a persistent 30-day exclusion list: once a model fails with a "not found" / "no longer available" / "deprecated" style error, it's excluded from auto-selection going forward and the next-best available Imagen model (fast/ultra variant, or whatever Google adds next) is used automatically instead.
 
@@ -85,6 +88,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 * Save-to-post-meta with title/subject selection.
 
 == Upgrade Notice ==
+
+= 1.3.2 =
+Fixes no way to set an OpenAI/Gemini key for image generation when a different provider is used for text.
 
 = 1.3.1 =
 Fixes Imagen auto-selection re-picking a model Google has blocked for new users — adds a persistent exclusion list so it falls through to the next available model automatically.
