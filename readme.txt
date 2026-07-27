@@ -3,7 +3,7 @@ Contributors: ziv
 Tags: social media, ai, content, marketing, image generation
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -58,6 +58,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 
 == Changelog ==
 
+= 1.4.1 =
+* Fix: the new Gemini image generation (1.4.0) failed with "Invalid value at 'generation_config.response_format.image.aspect_ratio'". The request was built against the `v1` (non-beta) endpoint, whose `responseFormat.image` field is backed by strict protobuf enums that don't accept plain strings like "16:9" or "1K". Switched to the confirmed-working `v1beta` endpoint with `generationConfig.imageConfig`, which does accept plain aspect ratio/size strings.
+
 = 1.4.0 =
 * Fix: "This model ... is no longer available to new users" on Gemini image generation, even with a paid Google AI Studio account. Root cause: Google is shutting down the entire Imagen predict API (imagen-4.0-generate-001/-ultra/-fast) on August 17, 2026 for every account — it was never a billing issue. Replaced Imagen entirely with Google's recommended successor, the "Nano Banana" family (generateContent-based image generation). Choose between Gemini 3.1 Flash Image (fast, has a free tier) or Gemini 3 Pro Image (highest quality, paid only) in Settings → Social Assets. The old model auto-detection/exclusion system is removed since it no longer applies.
 * Fix: the Titles tab rendered blank apart from the "best for..." suggestion note — the actual title text was being written into a hidden element instead of the visible one. Titles now display correctly alongside their notes.
@@ -100,6 +103,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 * Save-to-post-meta with title/subject selection.
 
 == Upgrade Notice ==
+
+= 1.4.1 =
+Fixes "Invalid value ... ImageResponseFormat.AspectRatio" — 1.4.0's Gemini image request hit the wrong API version. Required if you're on 1.4.0.
 
 = 1.4.0 =
 Fixes Gemini image generation for good — Google shut down Imagen entirely (not a billing issue), now using their current Nano Banana models. Also fixes blank title text and reorders the image/results layout.

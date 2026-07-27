@@ -156,7 +156,11 @@ class SAG_API {
 		);
 		$aspect = $aspect_map[ $format ] ?? '16:9';
 
-		$url = "https://generativelanguage.googleapis.com/v1/models/{$model}:generateContent";
+		// v1beta + generationConfig.imageConfig is the confirmed-working combo for the Nano Banana
+		// family. v1 (non-beta) exposes a stricter "responseFormat.image" field backed by a proto
+		// enum that rejects plain strings like "16:9"/"1K" — that's what threw the
+		// "Invalid value ... ImageResponseFormat.AspectRatio" error.
+		$url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
 
 		$response = wp_remote_post( $url, array(
 			'timeout' => 120,
@@ -170,9 +174,7 @@ class SAG_API {
 				),
 				'generationConfig' => array(
 					'responseModalities' => array( 'IMAGE' ),
-					'responseFormat'     => array(
-						'image' => array( 'aspectRatio' => $aspect, 'imageSize' => '1K' ),
-					),
+					'imageConfig'        => array( 'aspectRatio' => $aspect, 'imageSize' => '1K' ),
 				),
 			) ),
 		) );
