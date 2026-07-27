@@ -3,7 +3,7 @@ Contributors: ziv
 Tags: social media, ai, content, marketing, image generation
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -58,6 +58,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 
 == Changelog ==
 
+= 1.4.3 =
+* Changed: added a bottom border and 15px bottom padding to the save row ("Save to post meta — select a title first"), so it sits inside a clear frame instead of running flush against the card edge.
+
 = 1.4.2 =
 * Changed: layout reorder — social assets results (Titles/Email/LinkedIn/etc. tabs) now appear directly under the Text section that generates them, above the Image section. Order is now: Text → Results → Image → Generated image.
 
@@ -106,6 +109,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 * Save-to-post-meta with title/subject selection.
 
 == Upgrade Notice ==
+
+= 1.4.3 =
+Minor CSS polish on the save row — no functional change.
 
 = 1.4.2 =
 Layout tweak — social assets results now sit above the Image section instead of below it.

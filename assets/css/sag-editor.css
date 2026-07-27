@@ -460,10 +460,12 @@
 #sag-save-row {
   align-items: center;
   border-top: 2px solid var(--sag-ink);
+  border-bottom: 2px solid var(--sag-ink);
   display: flex;
   gap: 12px;
   margin-top: 18px;
   padding-top: 14px;
+  padding-bottom: 15px;
   flex-wrap: wrap;
 }
 
