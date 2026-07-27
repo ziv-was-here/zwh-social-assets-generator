@@ -226,8 +226,7 @@
     titles.forEach(function (item, i) {
       var text = (i + 1) + '. ' + item.title;
       var note = item.note ? '<small class="sag-note">' + esc(item.note) + '</small>' : '';
-      var display = esc(text) + note;
-      html += selectBlock(text, display);
+      html += selectBlock(text, note);
     });
     $('#sag-panel-titles').html(html);
     // Re-apply saved selection if present

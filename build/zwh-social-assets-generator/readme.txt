@@ -3,7 +3,7 @@ Contributors: ziv
 Tags: social media, ai, content, marketing, image generation
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.4.0
+Stable tag: 1.3.4
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -58,11 +58,6 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 
 == Changelog ==
 
-= 1.4.0 =
-* Fix: "This model ... is no longer available to new users" on Gemini image generation, even with a paid Google AI Studio account. Root cause: Google is shutting down the entire Imagen predict API (imagen-4.0-generate-001/-ultra/-fast) on August 17, 2026 for every account — it was never a billing issue. Replaced Imagen entirely with Google's recommended successor, the "Nano Banana" family (generateContent-based image generation). Choose between Gemini 3.1 Flash Image (fast, has a free tier) or Gemini 3 Pro Image (highest quality, paid only) in Settings → Social Assets. The old model auto-detection/exclusion system is removed since it no longer applies.
-* Fix: the Titles tab rendered blank apart from the "best for..." suggestion note — the actual title text was being written into a hidden element instead of the visible one. Titles now display correctly alongside their notes.
-* Changed: the generated image now appears above the Titles/LinkedIn/etc. tabs instead of below them, so you see the image right under the button that made it.
-
 = 1.3.4 =
 * Fix: the Imagen model auto-detection cache and the "excluded model" list were shared site-wide instead of tied to which Gemini API key was configured. If you switched to a different key (e.g. moving to a paid-tier key), the plugin could keep honoring the old key's stale exclusions or cached model choice. Both are now scoped per API key, so entering a new key re-detects and re-checks access from scratch.
 
@@ -100,9 +95,6 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 * Save-to-post-meta with title/subject selection.
 
 == Upgrade Notice ==
-
-= 1.4.0 =
-Fixes Gemini image generation for good — Google shut down Imagen entirely (not a billing issue), now using their current Nano Banana models. Also fixes blank title text and reorders the image/results layout.
 
 = 1.3.4 =
 Fixes Imagen model detection/exclusion being shared across API keys — switching to a new (e.g. paid) Gemini key now re-checks access instead of reusing the old key's cache.

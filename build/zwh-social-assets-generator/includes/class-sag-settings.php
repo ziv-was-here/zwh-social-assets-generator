@@ -59,8 +59,6 @@ class SAG_Settings {
 		$output['ollama_model']   = sanitize_text_field( $input['ollama_model']  ?? 'qwen3.5' );
 		$output['stability_key']  = sanitize_text_field( $input['stability_key'] ?? '' );
 		$output['flux_key']       = sanitize_text_field( $input['flux_key']      ?? '' );
-		$valid_gemini_img_models  = array( 'gemini-3.1-flash-image', 'gemini-3-pro-image' );
-		$output['gemini_image_model'] = in_array( $input['gemini_image_model'] ?? '', $valid_gemini_img_models, true ) ? $input['gemini_image_model'] : 'gemini-3.1-flash-image';
 		$output['default_tone']   = sanitize_text_field( $input['default_tone']  ?? '' );
 		return $output;
 	}
@@ -357,7 +355,7 @@ class SAG_Settings {
 							<label for="sag-image-provider-dropdown">Image generation provider</label>
 							<select id="sag-image-provider-dropdown" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[image_provider]">
 								<option value="openai"    <?php selected( $active_img, 'openai' ); ?>>OpenAI — gpt-image-2</option>
-								<option value="gemini"    <?php selected( $active_img, 'gemini' ); ?>>Google — Gemini Image (Nano Banana)</option>
+								<option value="gemini"    <?php selected( $active_img, 'gemini' ); ?>>Google — Imagen 4</option>
 								<option value="stability" <?php selected( $active_img, 'stability' ); ?>>Stability AI — Stable Image Core</option>
 								<option value="flux"      <?php selected( $active_img, 'flux' ); ?>>Flux via fal.ai</option>
 							</select>
@@ -381,9 +379,9 @@ class SAG_Settings {
 							</tbody></table>
 						</div>
 
-						<!-- Image: Gemini "Nano Banana" (reuses gemini_key) -->
+						<!-- Image: Gemini Imagen (reuses gemini_key) -->
 						<div class="sag-provider-group sag-img-group <?php echo $active_img === 'gemini' ? 'sag-active' : ''; ?>" data-img-provider="gemini">
-							<h3>Google Gemini Image settings</h3>
+							<h3>Google Imagen 4 settings</h3>
 							<table class="form-table"><tbody>
 								<tr>
 									<th>API key</th>
@@ -396,11 +394,13 @@ class SAG_Settings {
 								</tr>
 								<tr>
 									<th>Model</th>
-									<td><?php $this->model_select( 'gemini_image_model', 'gemini-3.1-flash-image', array(
-										'gemini-3.1-flash-image' => 'Gemini 3.1 Flash Image — fast, has a free tier',
-										'gemini-3-pro-image'     => 'Gemini 3 Pro Image — highest quality, paid only',
-									) ); ?>
-										<p class="description">Google retired the old Imagen (predict) API on Aug 17, 2026 — this uses their current image models instead.</p>
+									<td>
+										<?php $detected = class_exists( 'SAG_API' ) ? SAG_API::get_cached_gemini_imagen_model_for_key( self::get( 'gemini_key' ) ) : ''; ?>
+										<?php if ( $detected ) : ?>
+											<strong><?php echo esc_html( $detected ); ?></strong> <span class="description">— auto-detected, refreshes daily</span>
+										<?php else : ?>
+											<span class="description">Auto-detected on first use — the plugin asks Google which Imagen model currently supports image generation for your key, rather than a hardcoded version.</span>
+										<?php endif; ?>
 									</td>
 								</tr>
 							</tbody></table>

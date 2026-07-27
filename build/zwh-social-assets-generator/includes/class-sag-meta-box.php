@@ -58,7 +58,7 @@ class SAG_Meta_Box {
 
 		$image_provider_labels = array(
 			'openai'    => 'OpenAI',
-			'gemini'    => 'Gemini Image',
+			'gemini'    => 'Imagen 4',
 			'stability' => 'Stability',
 			'flux'      => 'Flux',
 		);
@@ -93,7 +93,7 @@ class SAG_Meta_Box {
 			case 'stability': $has_image_api = ! empty( SAG_Settings::get( 'stability_key' ) ); break;
 			case 'flux':      $has_image_api = ! empty( SAG_Settings::get( 'flux_key' ) ); break;
 		}
-		$image_provider_labels = array( 'openai' => 'OpenAI', 'gemini' => 'Gemini Image', 'stability' => 'Stability', 'flux' => 'Flux' );
+		$image_provider_labels = array( 'openai' => 'OpenAI', 'gemini' => 'Imagen 4', 'stability' => 'Stability', 'flux' => 'Flux' );
 		$img_label = $image_provider_labels[ $image_provider ] ?? 'Image';
 		?>
 		<div id="sag-wrap">
@@ -140,28 +140,6 @@ class SAG_Meta_Box {
 			<div id="sag-status" hidden></div>
 			<div id="sag-image-status" hidden></div>
 
-			<!-- Image panel — always visible once generated -->
-			<div id="sag-image-panel" hidden>
-				<h4 class="sag-image-heading">Social share image</h4>
-				<div id="sag-image-preview"></div>
-				<div id="sag-image-actions" hidden>
-					<button type="button" id="sag-save-image-btn" class="button button-primary">
-						⬆ Save to media library
-					</button>
-					<span id="sag-image-saved-msg" hidden></span>
-				</div>
-				<div id="sag-image-prompt-panel" hidden>
-					<p class="description">No image API key found — copy this prompt into DALL-E, Midjourney, Ideogram, or any AI image generator:</p>
-					<div class="sag-copy-block">
-						<div class="sag-copy-content">
-							<div class="sag-copy-display" id="sag-image-prompt-text"></div>
-							<div class="sag-copy-target" id="sag-image-prompt-raw" style="display:none"></div>
-						</div>
-						<button type="button" class="button sag-copy-prompt-btn">Copy</button>
-					</div>
-				</div>
-			</div>
-
 			<div id="sag-results" <?php echo $saved ? '' : 'hidden'; ?>>
 				<div class="sag-tabs" role="tablist">
 					<button type="button" class="sag-tab active" data-tab="titles" role="tab">Titles</button>
@@ -185,6 +163,28 @@ class SAG_Meta_Box {
 					<button type="button" id="sag-save-btn" class="button" disabled>Save to post meta</button>
 					<span id="sag-save-hint" class="sag-save-hint">— select a title first</span>
 					<span id="sag-saved-msg" hidden>✓ Saved</span>
+				</div>
+			</div>
+
+			<!-- Image panel — always visible once generated -->
+			<div id="sag-image-panel" hidden>
+				<h4 class="sag-image-heading">Social share image</h4>
+				<div id="sag-image-preview"></div>
+				<div id="sag-image-actions" hidden>
+					<button type="button" id="sag-save-image-btn" class="button button-primary">
+						⬆ Save to media library
+					</button>
+					<span id="sag-image-saved-msg" hidden></span>
+				</div>
+				<div id="sag-image-prompt-panel" hidden>
+					<p class="description">No image API key found — copy this prompt into DALL-E, Midjourney, Ideogram, or any AI image generator:</p>
+					<div class="sag-copy-block">
+						<div class="sag-copy-content">
+							<div class="sag-copy-display" id="sag-image-prompt-text"></div>
+							<div class="sag-copy-target" id="sag-image-prompt-raw" style="display:none"></div>
+						</div>
+						<button type="button" class="button sag-copy-prompt-btn">Copy</button>
+					</div>
 				</div>
 			</div>
 
