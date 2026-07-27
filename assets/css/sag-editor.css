@@ -24,12 +24,50 @@
   color: var(--sag-ink);
 }
 
-#sag-controls {
+/* Top bar (settings link) */
+#sag-top-bar {
   display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+/* Section cards — Text / Image, stacked */
+.sag-section {
+  background: var(--sag-cream-low);
+  border: 2px solid var(--sag-ink);
+  box-shadow: 4px 4px 0 var(--sag-ink);
+  margin-bottom: 16px;
+  padding: 14px 16px 16px;
+}
+
+.sag-section-head {
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.sag-section-title {
+  color: var(--sag-ink);
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: .04em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.sag-section-desc {
+  color: var(--sag-ink-soft);
+  font-size: 12px;
+  margin: 0 0 12px;
+}
+
+.sag-section-body {
+  align-items: center;
+  display: flex;
   flex-wrap: wrap;
+  gap: 10px;
 }
 
 #sag-wrap .button {
@@ -75,7 +113,6 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 16px;
   flex-wrap: wrap;
 }
 

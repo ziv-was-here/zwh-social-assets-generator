@@ -3,7 +3,7 @@ Contributors: ziv
 Tags: social media, ai, content, marketing, image generation
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -58,6 +58,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 
 == Changelog ==
 
+= 1.3.0 =
+* Changed: the meta box now separates text and image generation into two clearly labeled sections, stacked vertically, each with a one-line explanation of what it generates — instead of two buttons sitting side by side with no context.
+
 = 1.2.0 =
 * New: Google Imagen model is now auto-detected instead of hardcoded. We've hit Google retiring the Imagen model ID twice in one week (imagen-3.0-generate-001, then -002) — the plugin now calls ListModels itself, picks the newest model that supports "predict", and caches it for 24 hours. If a cached model gets retired mid-day, the very next request detects the 404/"not found" response, clears the cache, re-detects, and retries automatically — no more manual hotfixes when Google renames a model.
 * Settings → Social Assets now shows the currently auto-detected Imagen model instead of a fixed name.
@@ -79,6 +82,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 * Save-to-post-meta with title/subject selection.
 
 == Upgrade Notice ==
+
+= 1.3.0 =
+Meta box UX update — text and image generation are now separate labeled sections.
 
 = 1.2.0 =
 Google Imagen model is now auto-detected and self-healing — no more breakage when Google retires a model ID.

@@ -97,26 +97,44 @@ class SAG_Meta_Box {
 		$img_label = $image_provider_labels[ $image_provider ] ?? 'Image';
 		?>
 		<div id="sag-wrap">
-			<div id="sag-controls">
-				<input type="text" id="sag-tone" placeholder="Tone override (optional, e.g. casual, bold)"
-					value="<?php echo esc_attr( $tone ); ?>">
-				<button type="button" id="sag-generate-btn" class="button button-primary">
-					Generate Social Assets
-				</button>
-				<button type="button" id="sag-image-btn" class="button <?php echo $has_image_api ? '' : 'sag-btn-prompt'; ?>">
-					<?php echo $has_image_api ? '🎨 Generate Image (' . esc_html( $img_label ) . ')' : '🎨 Get Image Prompt'; ?>
-				</button>
-			</div>
 
-			<div id="sag-format-bar">
-				<span class="sag-format-label">Image format:</span>
-				<button type="button" class="sag-format-btn active" data-format="banner">🖼 Banner<small>1200×630</small></button>
-				<button type="button" class="sag-format-btn" data-format="feed_square">⬛ Square<small>1080×1080</small></button>
-				<button type="button" class="sag-format-btn" data-format="feed_portrait">📷 Feed<small>1080×1350</small></button>
-				<button type="button" class="sag-format-btn" data-format="stories">📲 Stories<small>1080×1920</small></button>
-				<span id="sag-provider-badge"><?php echo esc_html( $provider_label ); ?></span>
+			<div id="sag-top-bar">
 				<a href="<?php echo esc_url( admin_url( 'options-general.php?page=social-assets-generator' ) ); ?>"
 					class="sag-settings-link">⚙ Settings</a>
+			</div>
+
+			<div class="sag-section" id="sag-section-text">
+				<div class="sag-section-head">
+					<h4 class="sag-section-title">📝 Text</h4>
+					<span id="sag-provider-badge"><?php echo esc_html( $provider_label ); ?></span>
+				</div>
+				<p class="sag-section-desc">Generates 5 titles, 5 email subject lines, and ready-to-post copy for LinkedIn, Twitter/X, Instagram, and Facebook from this post.</p>
+				<div class="sag-section-body">
+					<input type="text" id="sag-tone" placeholder="Tone override (optional, e.g. casual, bold)"
+						value="<?php echo esc_attr( $tone ); ?>">
+					<button type="button" id="sag-generate-btn" class="button button-primary">
+						Generate Social Assets
+					</button>
+				</div>
+			</div>
+
+			<div class="sag-section" id="sag-section-image">
+				<div class="sag-section-head">
+					<h4 class="sag-section-title">🎨 Image</h4>
+				</div>
+				<p class="sag-section-desc">Generates a social share image in the format you pick below, using <?php echo esc_html( $img_label ); ?>.</p>
+				<div class="sag-section-body">
+					<div id="sag-format-bar">
+						<span class="sag-format-label">Format:</span>
+						<button type="button" class="sag-format-btn active" data-format="banner">🖼 Banner<small>1200×630</small></button>
+						<button type="button" class="sag-format-btn" data-format="feed_square">⬛ Square<small>1080×1080</small></button>
+						<button type="button" class="sag-format-btn" data-format="feed_portrait">📷 Feed<small>1080×1350</small></button>
+						<button type="button" class="sag-format-btn" data-format="stories">📲 Stories<small>1080×1920</small></button>
+					</div>
+					<button type="button" id="sag-image-btn" class="button <?php echo $has_image_api ? '' : 'sag-btn-prompt'; ?>">
+						<?php echo $has_image_api ? '🎨 Generate Image (' . esc_html( $img_label ) . ')' : '🎨 Get Image Prompt'; ?>
+					</button>
+				</div>
 			</div>
 
 			<div id="sag-status" hidden></div>
