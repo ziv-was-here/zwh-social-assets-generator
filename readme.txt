@@ -3,7 +3,7 @@ Contributors: ziv
 Tags: social media, ai, content, marketing, image generation
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.3.2
+Stable tag: 1.3.3
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -58,6 +58,10 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 
 == Changelog ==
 
+= 1.3.3 =
+* Fix: "Generate Social Assets" could fail with "Could not parse the API response as JSON" on longer posts. The full social kit (5 titles, 5 subject lines, LinkedIn post, 5-tweet thread, Instagram, Facebook, hashtag sets) is a large JSON payload, and the output token limit (4096, or unset for OpenAI/Groq/Mistral/Ollama) was too small — the response was getting cut off mid-JSON. Raised limits across all providers (Claude, OpenAI-compatible, Gemini, Ollama Cloud) and added a clear "response looks cut off" hint to the error message when this happens.
+* Fix: that same error message was rendering the response preview double-HTML-escaped (visible `&quot;` instead of `"`), from an unnecessary `esc_html()` call — the admin UI already escapes safely on display.
+
 = 1.3.2 =
 * Fix: if your Image generation provider was OpenAI or Gemini but your Active AI provider (text) was something else, there was no visible way to set that key — it lived in a text-provider section hidden behind an unrelated dropdown. Both image sections now have their own editable API key field, live-synced with the text-provider field so there's still only one value saved, not two conflicting ones.
 
@@ -88,6 +92,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 * Save-to-post-meta with title/subject selection.
 
 == Upgrade Notice ==
+
+= 1.3.3 =
+Fixes text generation failing/truncating on longer posts (token limit was too low) and a garbled error message.
 
 = 1.3.2 =
 Fixes no way to set an OpenAI/Gemini key for image generation when a different provider is used for text.

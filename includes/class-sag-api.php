@@ -604,7 +604,7 @@ class SAG_API {
 				),
 				'body' => wp_json_encode( array(
 					'model'      => $model,
-					'max_tokens' => 4096,
+					'max_tokens' => 8000, // The full social kit (titles, subjects, LinkedIn, thread, IG, FB, hashtags) can run long — 4096 was truncating mid-JSON.
 					'system'     => $system,
 					'messages'   => array( array( 'role' => 'user', 'content' => $user ) ),
 				) ),
@@ -620,8 +620,9 @@ class SAG_API {
 		}
 
 		$body = array(
-			'model'    => $model,
-			'messages' => array(
+			'model'      => $model,
+			'max_tokens' => 8000, // Explicit — left unset this fell back to inconsistent per-provider defaults that could truncate the JSON mid-response.
+			'messages'   => array(
 				array( 'role' => 'system', 'content' => $system ),
 				array( 'role' => 'user',   'content' => $user ),
 			),
@@ -664,7 +665,7 @@ class SAG_API {
 			),
 			'generationConfig' => array(
 				'responseMimeType' => 'application/json',
-				'maxOutputTokens'  => 4096,
+				'maxOutputTokens'  => 8192, // Thinking tokens count against this budget on 2.5+ models — 4096 left too little room for the actual JSON output and was truncating mid-response.
 				'thinkingConfig'   => array( 'thinkingBudget' => 1024 ),
 			),
 		);
@@ -702,6 +703,7 @@ class SAG_API {
 				'body' => wp_json_encode( array(
 					'model'    => $model,
 					'stream'   => false,
+					'options'  => array( 'num_predict' => 8000 ),
 					'messages' => array(
 						array( 'role' => 'system', 'content' => $system ),
 						array( 'role' => 'user',   'content' => $user ),
@@ -792,9 +794,15 @@ class SAG_API {
 			}
 		}
 
+		$open_braces  = substr_count( $text, '{' );
+		$close_braces = substr_count( $text, '}' );
+		$truncated_hint = ( $open_braces > $close_braces )
+			? ' The response looks cut off mid-JSON (unbalanced braces) — this usually means the output hit the model\'s token limit before finishing. Try a shorter post, or switch to a model with a larger output limit.'
+			: '';
+
 		return new WP_Error(
 			'sag_json_error',
-			'Could not parse the API response as JSON. First 400 chars: ' . esc_html( substr( $text, 0, 400 ) )
+			'Could not parse the API response as JSON.' . $truncated_hint . ' First 400 chars: ' . substr( $text, 0, 400 )
 		);
 	}
 }
