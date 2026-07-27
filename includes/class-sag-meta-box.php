@@ -118,49 +118,7 @@ class SAG_Meta_Box {
 				</div>
 			</div>
 
-			<div class="sag-section" id="sag-section-image">
-				<div class="sag-section-head">
-					<h4 class="sag-section-title">🎨 Image</h4>
-				</div>
-				<p class="sag-section-desc">Generates a social share image in the format you pick below, using <?php echo esc_html( $img_label ); ?>.</p>
-				<div class="sag-section-body">
-					<div id="sag-format-bar">
-						<span class="sag-format-label">Format:</span>
-						<button type="button" class="sag-format-btn active" data-format="banner">🖼 Banner<small>1200×630</small></button>
-						<button type="button" class="sag-format-btn" data-format="feed_square">⬛ Square<small>1080×1080</small></button>
-						<button type="button" class="sag-format-btn" data-format="feed_portrait">📷 Feed<small>1080×1350</small></button>
-						<button type="button" class="sag-format-btn" data-format="stories">📲 Stories<small>1080×1920</small></button>
-					</div>
-					<button type="button" id="sag-image-btn" class="button <?php echo $has_image_api ? '' : 'sag-btn-prompt'; ?>">
-						<?php echo $has_image_api ? '🎨 Generate Image (' . esc_html( $img_label ) . ')' : '🎨 Get Image Prompt'; ?>
-					</button>
-				</div>
-			</div>
-
 			<div id="sag-status" hidden></div>
-			<div id="sag-image-status" hidden></div>
-
-			<!-- Image panel — always visible once generated -->
-			<div id="sag-image-panel" hidden>
-				<h4 class="sag-image-heading">Social share image</h4>
-				<div id="sag-image-preview"></div>
-				<div id="sag-image-actions" hidden>
-					<button type="button" id="sag-save-image-btn" class="button button-primary">
-						⬆ Save to media library
-					</button>
-					<span id="sag-image-saved-msg" hidden></span>
-				</div>
-				<div id="sag-image-prompt-panel" hidden>
-					<p class="description">No image API key found — copy this prompt into DALL-E, Midjourney, Ideogram, or any AI image generator:</p>
-					<div class="sag-copy-block">
-						<div class="sag-copy-content">
-							<div class="sag-copy-display" id="sag-image-prompt-text"></div>
-							<div class="sag-copy-target" id="sag-image-prompt-raw" style="display:none"></div>
-						</div>
-						<button type="button" class="button sag-copy-prompt-btn">Copy</button>
-					</div>
-				</div>
-			</div>
 
 			<div id="sag-results" <?php echo $saved ? '' : 'hidden'; ?>>
 				<div class="sag-tabs" role="tablist">
@@ -185,6 +143,49 @@ class SAG_Meta_Box {
 					<button type="button" id="sag-save-btn" class="button" disabled>Save to post meta</button>
 					<span id="sag-save-hint" class="sag-save-hint">— select a title first</span>
 					<span id="sag-saved-msg" hidden>✓ Saved</span>
+				</div>
+			</div>
+
+			<div class="sag-section" id="sag-section-image">
+				<div class="sag-section-head">
+					<h4 class="sag-section-title">🎨 Image</h4>
+				</div>
+				<p class="sag-section-desc">Generates a social share image in the format you pick below, using <?php echo esc_html( $img_label ); ?>.</p>
+				<div class="sag-section-body">
+					<div id="sag-format-bar">
+						<span class="sag-format-label">Format:</span>
+						<button type="button" class="sag-format-btn active" data-format="banner">🖼 Banner<small>1200×630</small></button>
+						<button type="button" class="sag-format-btn" data-format="feed_square">⬛ Square<small>1080×1080</small></button>
+						<button type="button" class="sag-format-btn" data-format="feed_portrait">📷 Feed<small>1080×1350</small></button>
+						<button type="button" class="sag-format-btn" data-format="stories">📲 Stories<small>1080×1920</small></button>
+					</div>
+					<button type="button" id="sag-image-btn" class="button <?php echo $has_image_api ? '' : 'sag-btn-prompt'; ?>">
+						<?php echo $has_image_api ? '🎨 Generate Image (' . esc_html( $img_label ) . ')' : '🎨 Get Image Prompt'; ?>
+					</button>
+				</div>
+			</div>
+
+			<div id="sag-image-status" hidden></div>
+
+			<!-- Image panel — always visible once generated -->
+			<div id="sag-image-panel" hidden>
+				<h4 class="sag-image-heading">Social share image</h4>
+				<div id="sag-image-preview"></div>
+				<div id="sag-image-actions" hidden>
+					<button type="button" id="sag-save-image-btn" class="button button-primary">
+						⬆ Save to media library
+					</button>
+					<span id="sag-image-saved-msg" hidden></span>
+				</div>
+				<div id="sag-image-prompt-panel" hidden>
+					<p class="description">No image API key found — copy this prompt into DALL-E, Midjourney, Ideogram, or any AI image generator:</p>
+					<div class="sag-copy-block">
+						<div class="sag-copy-content">
+							<div class="sag-copy-display" id="sag-image-prompt-text"></div>
+							<div class="sag-copy-target" id="sag-image-prompt-raw" style="display:none"></div>
+						</div>
+						<button type="button" class="button sag-copy-prompt-btn">Copy</button>
+					</div>
 				</div>
 			</div>
 

@@ -3,7 +3,7 @@ Contributors: ziv
 Tags: social media, ai, content, marketing, image generation
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -58,6 +58,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 
 == Changelog ==
 
+= 1.4.2 =
+* Changed: layout reorder — social assets results (Titles/Email/LinkedIn/etc. tabs) now appear directly under the Text section that generates them, above the Image section. Order is now: Text → Results → Image → Generated image.
+
 = 1.4.1 =
 * Fix: the new Gemini image generation (1.4.0) failed with "Invalid value at 'generation_config.response_format.image.aspect_ratio'". The request was built against the `v1` (non-beta) endpoint, whose `responseFormat.image` field is backed by strict protobuf enums that don't accept plain strings like "16:9" or "1K". Switched to the confirmed-working `v1beta` endpoint with `generationConfig.imageConfig`, which does accept plain aspect ratio/size strings.
 
@@ -103,6 +106,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 * Save-to-post-meta with title/subject selection.
 
 == Upgrade Notice ==
+
+= 1.4.2 =
+Layout tweak — social assets results now sit above the Image section instead of below it.
 
 = 1.4.1 =
 Fixes "Invalid value ... ImageResponseFormat.AspectRatio" — 1.4.0's Gemini image request hit the wrong API version. Required if you're on 1.4.0.
