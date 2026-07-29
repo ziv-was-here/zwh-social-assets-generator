@@ -3,7 +3,7 @@ Contributors: ziv
 Tags: social media, ai, content, marketing, image generation
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.4.3
+Stable tag: 1.4.4
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -58,6 +58,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 
 == Changelog ==
 
+= 1.4.4 =
+* Changed: removed the "— free tier" label from the Google Gemini option in the Active AI provider dropdown — tier isn't something the plugin controls, it depends on whether your API key's Google Cloud project has billing linked, so the label was misleading for paid accounts.
+
 = 1.4.3 =
 * Changed: added a bottom border and 15px bottom padding to the save row ("Save to post meta — select a title first"), so it sits inside a clear frame instead of running flush against the card edge.
 
@@ -109,6 +112,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 * Save-to-post-meta with title/subject selection.
 
 == Upgrade Notice ==
+
+= 1.4.4 =
+Minor label fix — removes misleading "free tier" text from the Gemini provider option.
 
 = 1.4.3 =
 Minor CSS polish on the save row — no functional change.

@@ -191,7 +191,7 @@ class SAG_Settings {
 							<select id="sag-provider-dropdown" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[provider]">
 								<option value="claude"  <?php selected( $active, 'claude' );  ?>>Claude (Anthropic)</option>
 								<option value="openai"  <?php selected( $active, 'openai' );  ?>>OpenAI (ChatGPT)</option>
-								<option value="gemini"  <?php selected( $active, 'gemini' );  ?>>Google Gemini — free tier</option>
+								<option value="gemini"  <?php selected( $active, 'gemini' );  ?>>Google Gemini</option>
 								<option value="groq"    <?php selected( $active, 'groq' );    ?>>Groq — free tier, fast</option>
 								<option value="mistral" <?php selected( $active, 'mistral' ); ?>>Mistral — free tier</option>
 								<option value="ollama"  <?php selected( $active, 'ollama' );  ?>>Ollama Cloud — Pro plan</option>
