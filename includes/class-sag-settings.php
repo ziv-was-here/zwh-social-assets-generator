@@ -377,7 +377,7 @@ class SAG_Settings {
 										<p class="description">Same key as the OpenAI text settings above — edit it from either place. Get one at <a href="https://platform.openai.com" target="_blank">platform.openai.com</a></p>
 									</td>
 								</tr>
-								<tr><th>Model</th><td><strong>gpt-image-2</strong> <span class="description">— 1536×1024, medium quality</span></td></tr>
+								<tr><th>Model</th><td><strong>gpt-image-2</strong> <span class="description">— 1536×1024, low quality (faster, less likely to time out on slower hosting)</span></td></tr>
 							</tbody></table>
 						</div>
 

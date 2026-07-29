@@ -3,7 +3,7 @@ Contributors: ziv
 Tags: social media, ai, content, marketing, image generation
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.4.5
+Stable tag: 1.4.6
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -57,6 +57,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 2. The Settings page showing provider selection and image generation options.
 
 == Changelog ==
+
+= 1.4.6 =
+* Changed: OpenAI image generation (gpt-image-2) now requests "low" quality instead of "medium." Medium-quality generations take noticeably longer, which was tripping 504 Gateway Timeout errors on hosts/CDNs with tighter proxy timeouts (e.g. Cloudflare's 100s edge cap, or a hosting provider's PHP execution limit). Low quality trades a bit of image fidelity for a much more reliable generation time.
 
 = 1.4.5 =
 * Changed: the "Save to post meta" button was sitting almost flush against the save row's bottom border, and the row itself had no gap before the Image section below it. Increased bottom padding (15px → 20px) so the button clears its border, and added a 20px bottom margin to separate the row from the next section.
@@ -115,6 +118,9 @@ Yes — post title and content are sent to the AI provider you select. Review ea
 * Save-to-post-meta with title/subject selection.
 
 == Upgrade Notice ==
+
+= 1.4.6 =
+Fixes intermittent 504 Gateway Timeout on OpenAI image generation by lowering request quality for faster, more reliable responses.
 
 = 1.4.5 =
 CSS polish — more breathing room around the save row.

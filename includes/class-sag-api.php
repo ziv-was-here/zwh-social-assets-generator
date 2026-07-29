@@ -100,7 +100,10 @@ class SAG_API {
 					'prompt'  => $prompt,
 					'n'       => 1,
 					'size'    => $size,
-					'quality' => 'medium',
+					// 'low' generates noticeably faster than 'medium' — trades a bit of image
+					// fidelity for a much lower chance of tripping a hosting/proxy timeout
+					// (e.g. Cloudflare's 100s edge cap) on slower-responding requests.
+					'quality' => 'low',
 				) ),
 			)
 		);
